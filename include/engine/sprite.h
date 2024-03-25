@@ -36,7 +36,4 @@ Sprite CreateSprite(
     float Height
 );
 
-void render(Sprite* sprite);
-void update(Sprite* sprite, GLFWwindow* window);
-
 #endif // SPRITE_H

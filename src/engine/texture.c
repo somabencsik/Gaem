@@ -3,6 +3,8 @@
 #include <glad/glad.h>
 #include "stb_image.h"
 
+void use_texture(Texture* texture);
+
 Texture CreateTexture(const char* TexturePath)
 {
     Texture texture;

@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void render(Sprite* sprite);
+void update(Sprite* sprite, GLFWwindow* window);
+
 Sprite CreateSprite(
     const char* VertexPath,
     const char* FragmentPath,
@@ -31,11 +34,11 @@ Sprite CreateSprite(
     float DrawHeight = ((Height + Y) / 300 - 1) * -1;
 
     float vertices[] = {
-        // positions          // colors           // texture coords
-        DrawWidth,    DrawY,   0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-        DrawWidth,    DrawHeight,   0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-        DrawX,   DrawHeight,   0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-        DrawX,   DrawY,   0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+        // positions            // colors                 // texture coords
+        DrawWidth,  DrawY,      0.0f, 1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+        DrawWidth,  DrawHeight, 0.0f, 0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+        DrawX,      DrawHeight, 0.0f, 0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+        DrawX,      DrawY,      0.0f, 1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
     };
     unsigned int indices[] = {  
         0, 1, 3, // first triangle
@@ -90,18 +93,18 @@ void update(Sprite* sprite, GLFWwindow* window)
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        sprite->XOffset = sprite->XOffset + 0.001;
+        sprite->XOffset = sprite->XOffset + 0.01;
     }
     else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        sprite->XOffset = sprite->XOffset - 0.001;
+        sprite->XOffset = sprite->XOffset - 0.01;
     }
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        sprite->YOffset = sprite->YOffset + 0.001;
+        sprite->YOffset = sprite->YOffset + 0.01;
     }
     else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        sprite->YOffset = sprite->YOffset - 0.001;
+        sprite->YOffset = sprite->YOffset - 0.01;
     }
 }

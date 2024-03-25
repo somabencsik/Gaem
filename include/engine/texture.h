@@ -10,6 +10,5 @@ struct _texture
 };
 
 Texture CreateTexture(const char* TexturePath);
-void use_texture(Texture* texture);
 
 #endif // TEXTURE_H
