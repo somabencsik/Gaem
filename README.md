@@ -2,7 +2,7 @@ A typical game with fantasy characters.
 
 # TODOs
 
-- [ ] Separate sprite renderer
+- [x] Separate sprite renderer
 - [ ] Some Game.h and Game.c design
 - [ ] "Player" should be a separate class from engine
 - [ ] Create the example separate?
