@@ -1,21 +1,6 @@
+#include "game.h"
+
 #include <stdio.h>
-
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-
-#include "shader.h"
-#include "texture.h"
-#include "rectangle.h"
-
-#define true 1
-#define false 0
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow *window);
-
-//////
-////// EXAMPLE FOR PLAYER CODE
-//////
 
 typedef struct _player Player;
 struct _player
@@ -34,7 +19,7 @@ Player CreatePlayer(
 {
     Player player;
     player.Rect = CreateRectangle(TexturePath, X, Y, Width, Height);
-    player.Rect.update = PlayerInput;
+    player.Rect.Update = PlayerInput;
     return player;
 }
 
@@ -66,69 +51,25 @@ void PlayerInput(GLFWwindow* window, Rectangle* Rect)
     }
 }
 
-
-//////
-////// END OF EXAMPLE
-//////
-
 int main()
 {
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
-    if (window == NULL)
-    {
-        printf("ERROR: Failed to create GLFW window\n");
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
-
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        printf("ERROR: Failed to initialize GLAD\n");
-        return -1;
-    }
-
-    glViewport(0, 0, 800, 600);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
+    Game game = CreateGame(800, 600);
+    
     Player player = CreatePlayer("./container.jpg", 50.0f, 50.0f, 50.0f, 50.0f);
 
-    while(!glfwWindowShouldClose(window))
+    for (int i = 0; i < 800 / 50; ++i)
     {
-        processInput(window);
-
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        player.Rect.update(window, &player.Rect);
-        player.Rect.render(&player.Rect);
-
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        for (int j = 0; j < 600 / 50; ++j)
+        {
+            if (i != 0 && i != 15 && j != 0 && j != 11)
+                continue;
+            Rectangle rect = CreateRectangle("./container.jpg", 50.0f * i, 50.0f * j, 50.0f, 50.0f);
+            game.AddObject(&game, &rect);
+        }
     }
 
-    glDeleteVertexArrays(1, &player.Rect.VAO);
-    glDeleteBuffers(1, &player.Rect.VBO);
-    glDeleteBuffers(1, &player.Rect.EBO);
+    game.AddObject(&game, &player.Rect);
 
-    glfwTerminate();
+    game.Loop(&game);
     return 0;
-}
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}
-
-void processInput(GLFWwindow *window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(window, true);
-    }
 }

@@ -22,8 +22,10 @@ struct _rectangle
     float XOffset;
     float YOffset;
 
-    void (*render)(Rectangle*);
-    void (*update)(GLFWwindow*, Rectangle*);
+    void (*Render)(Rectangle*);
+    void (*Update)(GLFWwindow*, Rectangle*);
+    
+    void (*CleanUp)(Rectangle*);
 };
 
 Rectangle CreateRectangle(

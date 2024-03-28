@@ -3,8 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void render(Rectangle* Rect);
-void update(GLFWwindow* window, Rectangle* Rect);
+void Render(Rectangle* Rect);
+void Update(GLFWwindow* window, Rectangle* Rect);
+void CleanUp(Rectangle* Rect);
 
 Rectangle CreateRectangle(
     const char* TexturePath,
@@ -15,6 +16,10 @@ Rectangle CreateRectangle(
 )
 {
     Rectangle Rect;
+
+    Rect.Update = Update;
+    Rect.Render = Render;
+    Rect.CleanUp = CleanUp;
 
     Rect.shader = CreateShader(
         "./resources/shaders/rectangle.vs",
@@ -64,13 +69,10 @@ Rectangle CreateRectangle(
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    Rect.update = update;
-    Rect.render = render;
-
     return Rect;
 }
 
-void render(Rectangle* Rect)
+void Render(Rectangle* Rect)
 {
     Rect->texture.use_texture(&Rect->texture);
     Rect->shader.use_shader(&Rect->shader);
@@ -78,7 +80,14 @@ void render(Rectangle* Rect)
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-void update(GLFWwindow* window, Rectangle* Rect)
+void Update(GLFWwindow* window, Rectangle* Rect)
 {
     
+}
+
+void CleanUp(Rectangle* Rect)
+{
+    glDeleteVertexArrays(1, &Rect->VAO);
+    glDeleteBuffers(1, &Rect->VBO);
+    glDeleteBuffers(1, &Rect->EBO);
 }
