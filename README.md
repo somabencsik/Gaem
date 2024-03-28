@@ -3,9 +3,11 @@ A typical game with fantasy characters.
 # TODOs
 
 - [x] Separate sprite renderer
-- [ ] Some Game.h and Game.c design
-- [ ] "Player" should be a separate class from engine
+- [x] Some Game.h and Game.c design
+- [x] "Player" should be a separate class from engine
+- [ ] Compile dlls?
 - [ ] Create the example separate?
+- [ ] Check collision
 - [ ] Try dynamic include "scripts"?
 
 # Milestones
