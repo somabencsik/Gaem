@@ -21,9 +21,13 @@ struct _rectangle
     float Height;
     float XOffset;
     float YOffset;
+    float DrawX;
+    float DrawY;
 
     void (*Render)(Rectangle*);
     void (*Update)(GLFWwindow*, Rectangle*);
+
+    void (*OnCollision)(Rectangle*, Rectangle*);
     
     void (*CleanUp)(Rectangle*);
 };

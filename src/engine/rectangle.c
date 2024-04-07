@@ -5,6 +5,7 @@
 
 void Render(Rectangle* Rect);
 void Update(GLFWwindow* window, Rectangle* Rect);
+void OnCollision(Rectangle* Rect, Rectangle* Other);
 void CleanUp(Rectangle* Rect);
 
 Rectangle CreateRectangle(
@@ -19,6 +20,7 @@ Rectangle CreateRectangle(
 
     Rect.Update = Update;
     Rect.Render = Render;
+    Rect.OnCollision = OnCollision;
     Rect.CleanUp = CleanUp;
 
     Rect.shader = CreateShader(
@@ -28,7 +30,7 @@ Rectangle CreateRectangle(
     Rect.texture = CreateTexture(TexturePath);
 
     Rect.X = X;
-    Rect.X = Y;
+    Rect.Y = Y;
     Rect.Width = Width;
     Rect.Height = Height;
     Rect.XOffset = 0.0f;
@@ -83,6 +85,11 @@ void Render(Rectangle* Rect)
 void Update(GLFWwindow* window, Rectangle* Rect)
 {
     
+}
+
+void OnCollision(Rectangle* Rect, Rectangle* Other)
+{
+
 }
 
 void CleanUp(Rectangle* Rect)

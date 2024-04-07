@@ -11,6 +11,7 @@ void RemoveObject(Game* game, Rectangle* Rect);
 void UpdateGame(Game* game);
 void RenderGame(Game* game);
 void Loop(Game* game);
+void CheckCollision(Game* game);
 void Clean(Game* game);
 
 Game CreateGame(unsigned int WindowWidth, unsigned int WindowHeight)
@@ -24,6 +25,7 @@ Game CreateGame(unsigned int WindowWidth, unsigned int WindowHeight)
     game.UpdateGame = UpdateGame;
     game.RenderGame = RenderGame;
     game.Loop = Loop;
+    game.CheckCollision = CheckCollision;
     game.Clean = Clean;
 
     glfwInit();
@@ -70,6 +72,7 @@ void RemoveObject(Game* game, Rectangle* Rect)
 
 void UpdateGame(Game* game)
 {
+    game->CheckCollision(game);
     for (unsigned int i = 0; i < game->ObjectsSize; ++i)
     {
         game->Objects[i].Update(game->Window, &game->Objects[i]);
@@ -100,6 +103,34 @@ void Loop(Game* game)
 
     game->Clean(game);
     glfwTerminate();
+}
+
+void CheckCollision(Game* game)
+{
+    Rectangle Current;
+    Rectangle Check;
+    for (unsigned int i = 0; i < game->ObjectsSize; ++i)
+    {
+        Current = game->Objects[i];
+        for (unsigned int j = 0; j < game->ObjectsSize; ++j)
+        {
+            if (i == j) continue;
+            Check = game->Objects[j];
+
+            // TODO: DEBUG Collision!
+
+            if (
+                Current.DrawX > Check.DrawX
+                && Current.DrawX < Check.DrawX + Check.Width
+                && Current.DrawY > Check.DrawY
+                && Current.DrawY < Check.DrawY + Check.Height
+            )
+            {
+                game->Objects[i].OnCollision(&game->Objects[i], &game->Objects[j]);
+                game->Objects[j].OnCollision(&game->Objects[j], &game->Objects[i]);
+            }
+        }
+    }
 }
 
 void Clean(Game* game)

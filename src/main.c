@@ -9,6 +9,7 @@ struct _player
 };
 
 void PlayerInput(GLFWwindow* window, Rectangle* Rect);
+void PlayerCollision(Rectangle* Rect, Rectangle* Other);
 
 Player CreatePlayer(
     const char* TexturePath,
@@ -20,6 +21,7 @@ Player CreatePlayer(
     Player player;
     player.Rect = CreateRectangle(TexturePath, X, Y, Width, Height);
     player.Rect.Update = PlayerInput;
+    player.Rect.OnCollision = PlayerCollision;
     return player;
 }
 
@@ -30,8 +32,10 @@ void PlayerInput(GLFWwindow* window, Rectangle* Rect)
 
     float DrawX = Rect->X / 400 - 1;
     float DrawY = (Rect->Y / 300 - 1) * -1;
-    Rect->X = (DrawX + Rect->XOffset + 1.0f) * 400.0f;
-    Rect->Y = (DrawX + Rect->XOffset + 1.0f) * 400.0f;
+    Rect->DrawX = DrawX;
+    Rect->DrawY = DrawY;
+    //Rect->X = (DrawX + Rect->XOffset + 1.0f) * 400.0f;
+    //Rect->Y = (DrawY + Rect->YOffset + 1.0f) * 300.0f;
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
@@ -51,19 +55,25 @@ void PlayerInput(GLFWwindow* window, Rectangle* Rect)
     }
 }
 
+void PlayerCollision(Rectangle* Rect, Rectangle* Other)
+{
+    printf("ASD!\n");
+}
+
 int main()
 {
     Game game = CreateGame(800, 600);
     
     Player player = CreatePlayer("./container.jpg", 50.0f, 50.0f, 50.0f, 50.0f);
 
+    Rectangle rect;
     for (int i = 0; i < 800 / 50; ++i)
     {
         for (int j = 0; j < 600 / 50; ++j)
         {
             if (i != 0 && i != 15 && j != 0 && j != 11)
                 continue;
-            Rectangle rect = CreateRectangle("./container.jpg", 50.0f * i, 50.0f * j, 50.0f, 50.0f);
+            rect = CreateRectangle("./container.jpg", 50.0f * i, 50.0f * j, 50.0f, 50.0f);
             game.AddObject(&game, &rect);
         }
     }
