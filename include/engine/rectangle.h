@@ -17,6 +17,8 @@ struct _rectangle
 
     float X;
     float Y;
+    float InitX;
+    float InitY;
     float Width;
     float Height;
     float XOffset;

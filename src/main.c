@@ -30,13 +30,13 @@ void PlayerInput(GLFWwindow* window, Rectangle* Rect)
     Rect->shader.setFloat(&Rect->shader, "xOffset", Rect->XOffset);
     Rect->shader.setFloat(&Rect->shader, "yOffset", Rect->YOffset);
 
-    float DrawX = Rect->X / 400 - 1;
-    float DrawY = (Rect->Y / 300 - 1) * -1;
+    float DrawX = Rect->InitX / 400 - 1;
+    float DrawY = (Rect->InitY / 300 - 1) * -1;
     Rect->DrawX = DrawX;
     Rect->DrawY = DrawY;
-    //Rect->X = (DrawX + Rect->XOffset + 1.0f) * 400.0f;
-    //Rect->Y = (DrawY + Rect->YOffset + 1.0f) * 300.0f;
-
+    Rect->X = (DrawX + Rect->XOffset + 1.0f) * 400.0f;
+    Rect->Y = (DrawY + Rect->YOffset + 1.0f) * 300.0f;
+    
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
         Rect->XOffset = Rect->XOffset + 0.01;
@@ -57,7 +57,7 @@ void PlayerInput(GLFWwindow* window, Rectangle* Rect)
 
 void PlayerCollision(Rectangle* Rect, Rectangle* Other)
 {
-    printf("ASD!\n");
+    //printf("ASD!\n");
 }
 
 int main()

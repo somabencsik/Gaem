@@ -29,8 +29,8 @@ Rectangle CreateRectangle(
     );
     Rect.texture = CreateTexture(TexturePath);
 
-    Rect.X = X;
-    Rect.Y = Y;
+    Rect.InitX = X;
+    Rect.InitY = Y;
     Rect.Width = Width;
     Rect.Height = Height;
     Rect.XOffset = 0.0f;
