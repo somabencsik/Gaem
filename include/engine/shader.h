@@ -13,6 +13,6 @@ struct _shader
     void (*setMat4)(Shader*, const char*, float[4][4]);
 };
 
-Shader CreateShader(const char* VertexPath, const char* FragmentPath);
+void CreateShader(const char* VertexPath, const char* FragmentPath, Shader* shader);
 
 #endif // SHADER_H

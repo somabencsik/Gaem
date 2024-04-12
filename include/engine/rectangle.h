@@ -34,12 +34,13 @@ struct _rectangle
     void (*CleanUp)(Rectangle*);
 };
 
-Rectangle CreateRectangle(
+void CreateRectangle(
     const char* TexturePath,
     float X,
     float Y,
     float Width,
-    float Height
+    float Height,
+    Rectangle* Rect
 );
 
 #endif // RECTANGLE_H

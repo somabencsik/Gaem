@@ -9,6 +9,6 @@ struct _texture
     void (*use_texture)(Texture *texture);
 };
 
-Texture CreateTexture(const char* TexturePath);
+void CreateTexture(const char* TexturePath, Texture* texture);
 
 #endif // TEXTURE_H

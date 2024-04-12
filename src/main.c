@@ -19,7 +19,7 @@ Player CreatePlayer(
     float Height)
 {
     Player player;
-    player.Rect = CreateRectangle(TexturePath, X, Y, Width, Height);
+    CreateRectangle(TexturePath, X, Y, Width, Height, &player.Rect);
     player.Rect.Update = PlayerInput;
     player.Rect.OnCollision = PlayerCollision;
     return player;
@@ -36,7 +36,8 @@ void PlayerInput(GLFWwindow* window, Rectangle* Rect)
     Rect->DrawY = DrawY;
     Rect->X = (DrawX + Rect->XOffset + 1.0f) * 400.0f;
     Rect->Y = (DrawY + Rect->YOffset + 1.0f) * 300.0f;
-    
+
+    printf("X: %f, Y: %f\n", Rect->X, Rect->Y);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
         Rect->XOffset = Rect->XOffset + 0.01;
@@ -64,21 +65,35 @@ int main()
 {
     Game game = CreateGame(800, 600);
     
-    Player player = CreatePlayer("./container.jpg", 50.0f, 50.0f, 50.0f, 50.0f);
+    //Player player = CreatePlayer("./container.jpg", 50.0f, 50.0f, 50.0f, 50.0f);
+    
+
+    Rectangle Rect;
+    CreateRectangle("./container.jpg", 50.0f, 50.0f, 50.0f, 50.0f, &Rect);
+    Rect.Update = &PlayerInput;
+    game.AddObject(&game, &Rect);
 
     Rectangle rect;
-    for (int i = 0; i < 800 / 50; ++i)
-    {
-        for (int j = 0; j < 600 / 50; ++j)
-        {
-            if (i != 0 && i != 15 && j != 0 && j != 11)
-                continue;
-            rect = CreateRectangle("./container.jpg", 50.0f * i, 50.0f * j, 50.0f, 50.0f);
-            game.AddObject(&game, &rect);
-        }
-    }
+    CreateRectangle("./container.jpg", 200.0f, 200.0f, 50.0f, 50.0f, &rect);
+    game.AddObject(&game, &rect);
+    
+    //for (int i = 0; i < 800 / 50; ++i)
+    //{
+    //    for (int j = 0; j < 600 / 50; ++j)
+    //    {
+    //        if (i != 0 && i != 15 && j != 0 && j != 11)
+    //            continue;
+    //        rect = CreateRectangle("./container.jpg", 50.0f * i, 50.0f * j, 50.0f, 50.0f);
+    //        game.AddObject(&game, &rect);
+    //    }
+    //}
 
-    game.AddObject(&game, &player.Rect);
+    //printf("X: %f, Y: %f\nX: %f, Y: %f\n\n", Rect.X, Rect.Y, rect.X, rect.Y);
+    
+    //game.UpdateGame(&game);
+    
+    //printf("X: %f, Y: %f\nX: %f, Y: %f\n\n", Rect.X, Rect.Y, rect.X, rect.Y);
+
 
     game.Loop(&game);
     return 0;

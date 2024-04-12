@@ -5,12 +5,10 @@
 
 void use_texture(Texture* texture);
 
-Texture CreateTexture(const char* TexturePath)
+void CreateTexture(const char* TexturePath, Texture* texture)
 {
-    Texture texture;
-
-    glGenTextures(1, &texture.ID);
-    glBindTexture(GL_TEXTURE_2D, texture.ID);
+    glGenTextures(1, &texture->ID);
+    glBindTexture(GL_TEXTURE_2D, texture->ID);
     
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -47,9 +45,7 @@ Texture CreateTexture(const char* TexturePath)
     }
     stbi_image_free(data);
 
-    texture.use_texture = use_texture;
-
-    return texture;
+    texture->use_texture = use_texture;
 }
 
 void use_texture(Texture* texture)

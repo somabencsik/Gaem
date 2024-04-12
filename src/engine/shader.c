@@ -13,14 +13,13 @@ void setInt(Shader* shader, const char* name, int value);
 void setFloat(Shader* shader, const char* name, float value);
 void setMat4(Shader* shader, const char* name, float matrix[4][4]);
 
-Shader CreateShader(const char* VertexPath, const char* FragmentPath)
+void CreateShader(const char* VertexPath, const char* FragmentPath, Shader* shader)
 {
-    Shader shader;
-    shader.use_shader = use_shader;
-    shader.setBool = setBool;
-    shader.setInt = setInt;
-    shader.setFloat = setFloat;
-    shader.setMat4 = setMat4;
+    shader->use_shader = use_shader;
+    shader->setBool = setBool;
+    shader->setInt = setInt;
+    shader->setFloat = setFloat;
+    shader->setMat4 = setMat4;
 
     const char* VertexCode = ReadShader(VertexPath);
     const char* FragmentCode = ReadShader(FragmentPath);
@@ -36,16 +35,14 @@ Shader CreateShader(const char* VertexPath, const char* FragmentPath)
     glCompileShader(FragmentShader);
     CheckShaderError(FragmentShader, "Fragment");
 
-    shader.ID = glCreateProgram();
-    glAttachShader(shader.ID, VertexShader);
-    glAttachShader(shader.ID, FragmentShader);
-    glLinkProgram(shader.ID);
-    CheckShaderError(shader.ID, "Program");
+    shader->ID = glCreateProgram();
+    glAttachShader(shader->ID, VertexShader);
+    glAttachShader(shader->ID, FragmentShader);
+    glLinkProgram(shader->ID);
+    CheckShaderError(shader->ID, "Program");
 
     glDeleteShader(VertexShader);
     glDeleteShader(FragmentShader);
-
-    return shader;
 }
 
 char* ReadShader(const char* ShaderPath)

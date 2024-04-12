@@ -8,33 +8,33 @@ void Update(GLFWwindow* window, Rectangle* Rect);
 void OnCollision(Rectangle* Rect, Rectangle* Other);
 void CleanUp(Rectangle* Rect);
 
-Rectangle CreateRectangle(
+void CreateRectangle(
     const char* TexturePath,
     float X,
     float Y,
     float Width,
-    float Height
+    float Height,
+    Rectangle* Rect
 )
 {
-    Rectangle Rect;
+    Rect->Update = Update;
+    Rect->Render = Render;
+    Rect->OnCollision = OnCollision;
+    Rect->CleanUp = CleanUp;
 
-    Rect.Update = Update;
-    Rect.Render = Render;
-    Rect.OnCollision = OnCollision;
-    Rect.CleanUp = CleanUp;
-
-    Rect.shader = CreateShader(
+    CreateShader(
         "./resources/shaders/rectangle.vs",
-        "./resources/shaders/rectangle.fs"
+        "./resources/shaders/rectangle.fs",
+        &Rect->shader
     );
-    Rect.texture = CreateTexture(TexturePath);
+    CreateTexture(TexturePath, &Rect->texture);
 
-    Rect.InitX = X;
-    Rect.InitY = Y;
-    Rect.Width = Width;
-    Rect.Height = Height;
-    Rect.XOffset = 0.0f;
-    Rect.YOffset = 0.0f;
+    Rect->InitX = X;
+    Rect->InitY = Y;
+    Rect->Width = Width;
+    Rect->Height = Height;
+    Rect->XOffset = 0.0f;
+    Rect->YOffset = 0.0f;
 
     float DrawX = X / 400 - 1;
     float DrawY = (Y / 300 - 1) * -1;
@@ -52,16 +52,16 @@ Rectangle CreateRectangle(
         0, 1, 3, // first triangle
         1, 2, 3  // second triangle
     };
-    glGenVertexArrays(1, &Rect.VAO);
-    glGenBuffers(1, &Rect.VBO);
-    glGenBuffers(1, &Rect.EBO);
+    glGenVertexArrays(1, &Rect->VAO);
+    glGenBuffers(1, &Rect->VBO);
+    glGenBuffers(1, &Rect->EBO);
 
-    glBindVertexArray(Rect.VAO);
+    glBindVertexArray(Rect->VAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, Rect.VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, Rect->VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Rect.EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Rect->EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // position attribute
@@ -70,8 +70,6 @@ Rectangle CreateRectangle(
     // texture coord attribute
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-
-    return Rect;
 }
 
 void Render(Rectangle* Rect)

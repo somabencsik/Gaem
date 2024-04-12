@@ -139,4 +139,5 @@ void Clean(Game* game)
     {
         game->Objects[i].CleanUp(&game->Objects[i]);
     }
+    free(game->Objects);
 }
