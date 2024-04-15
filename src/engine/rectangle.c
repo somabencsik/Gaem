@@ -75,7 +75,7 @@ void CreateRectangle(
 void Render(Rectangle* Rect)
 {
     Rect->texture.use_texture(&Rect->texture);
-    Rect->shader.use_shader(&Rect->shader);
+    Rect->shader.useShader(&Rect->shader);
     glBindVertexArray(Rect->VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }

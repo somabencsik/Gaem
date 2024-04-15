@@ -27,6 +27,7 @@ Player CreatePlayer(
 
 void PlayerInput(GLFWwindow* window, Rectangle* Rect)
 {
+    Rect->shader.useShader(&Rect->shader);
     Rect->shader.setFloat(&Rect->shader, "xOffset", Rect->XOffset);
     Rect->shader.setFloat(&Rect->shader, "yOffset", Rect->YOffset);
 
@@ -37,7 +38,6 @@ void PlayerInput(GLFWwindow* window, Rectangle* Rect)
     Rect->X = (DrawX + Rect->XOffset + 1.0f) * 400.0f;
     Rect->Y = (DrawY + Rect->YOffset + 1.0f) * 300.0f;
 
-    printf("X: %f, Y: %f\n", Rect->X, Rect->Y);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
         Rect->XOffset = Rect->XOffset + 0.01;

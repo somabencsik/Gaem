@@ -7,7 +7,7 @@
 
 char* ReadShader(const char* ShaderPath);
 void CheckShaderError(unsigned int shader, const char* type);
-void use_shader(Shader* shader);
+void useShader(Shader* shader);
 void setBool(Shader* shader, const char* name, int value);
 void setInt(Shader* shader, const char* name, int value);
 void setFloat(Shader* shader, const char* name, float value);
@@ -15,7 +15,7 @@ void setMat4(Shader* shader, const char* name, float matrix[4][4]);
 
 void CreateShader(const char* VertexPath, const char* FragmentPath, Shader* shader)
 {
-    shader->use_shader = use_shader;
+    shader->useShader = useShader;
     shader->setBool = setBool;
     shader->setInt = setInt;
     shader->setFloat = setFloat;
@@ -95,7 +95,7 @@ void CheckShaderError(unsigned int shader, const char* type)
     }
 }
 
-void use_shader(Shader* shader) 
+void useShader(Shader* shader) 
 { 
     glUseProgram(shader->ID); 
 }

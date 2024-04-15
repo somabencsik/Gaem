@@ -6,7 +6,7 @@ struct _shader
 {
     unsigned int ID;
 
-    void (*use_shader)(Shader*);
+    void (*useShader)(Shader*);
     void (*setBool)(Shader*, const char*, int);
     void (*setInt)(Shader*, const char*, int);
     void (*setFloat)(Shader*, const char*, float);
