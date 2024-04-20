@@ -11,7 +11,7 @@ void useShader(Shader* shader);
 void setBool(Shader* shader, const char* name, int value);
 void setInt(Shader* shader, const char* name, int value);
 void setFloat(Shader* shader, const char* name, float value);
-void setMat4(Shader* shader, const char* name, float matrix[4][4]);
+void setMat4(Shader* shader, const char* name, mat4 matrix);
 
 void CreateShader(const char* VertexPath, const char* FragmentPath, Shader* shader)
 {
@@ -115,7 +115,9 @@ void setFloat(Shader* shader, const char* name, float value)
     glUniform1f(glGetUniformLocation(shader->ID, name), value); 
 }
 
-void setMat4(Shader* shader, const char* name, float matrix[4][4])
+void setMat4(Shader* shader, const char* name, mat4 matrix)
 {
-
+    float sendMatrix[4] = {matrix[0][0], matrix[1][1], matrix[2][2], matrix[3][3]};
+    //float sendMatrix[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+    glUniformMatrix4fv(glGetUniformLocation(shader->ID, name), 1, GL_FALSE, matrix[0]);
 }

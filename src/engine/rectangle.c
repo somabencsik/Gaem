@@ -35,49 +35,56 @@ void CreateRectangle(
     Rect->Height = Height;
     Rect->XOffset = 0.0f;
     Rect->YOffset = 0.0f;
+    Rect->X = X;
+    Rect->Y = Y;
 
-    float DrawX = X / 400 - 1;
-    float DrawY = (Y / 300 - 1) * -1;
-    float DrawWidth = (Width + X) / 400 - 1;
-    float DrawHeight = ((Height + Y) / 300 - 1) * -1;
+    float vertices[] = { 
+        // pos      // tex
+        0.0f, 1.0f, 0.0f, 1.0f,
+        1.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 
 
-    float vertices[] = {
-        // positions                     // texture coords
-        DrawWidth,  DrawY,      0.0f,    1.0f, 1.0f, // top right
-        DrawWidth,  DrawHeight, 0.0f,    1.0f, 0.0f, // bottom right
-        DrawX,      DrawHeight, 0.0f,    0.0f, 0.0f, // bottom left
-        DrawX,      DrawY,      0.0f,    0.0f, 1.0f  // top left 
-    };
-    unsigned int indices[] = {  
-        0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
+        0.0f, 1.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 1.0f, 1.0f,
+        1.0f, 0.0f, 1.0f, 0.0f
     };
     glGenVertexArrays(1, &Rect->VAO);
     glGenBuffers(1, &Rect->VBO);
-    glGenBuffers(1, &Rect->EBO);
-
-    glBindVertexArray(Rect->VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, Rect->VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Rect->EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glBindVertexArray(Rect->VAO);
     glEnableVertexAttribArray(0);
-    // texture coord attribute
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    
+    mat4 projection = GLM_MAT4_IDENTITY_INIT;
+    glm_ortho(0.0f, 800.0f, 600.0f, 0.0f, -1.0f, 1.0f, projection);
+
+    Rect->shader.useShader(&Rect->shader);
+    Rect->shader.setMat4(&Rect->shader, "projection", projection);
 }
 
 void Render(Rectangle* Rect)
 {
-    Rect->texture.use_texture(&Rect->texture);
     Rect->shader.useShader(&Rect->shader);
+
+    mat4 model = GLM_MAT4_IDENTITY_INIT;
+
+    glm_translate(model, (vec3){Rect->X, Rect->Y, 0.0f});
+    glm_translate(model, (vec3){Rect->Width * 0.5f, Rect->Height * 0.5f, 0.0f});
+    glm_rotate(model, glm_rad(0.0f), (vec3){0.0f, 0.0f, 1.0f});
+    glm_translate(model, (vec3){Rect->Width * -0.5f, Rect->Height * -0.5f, 0.0f});
+    glm_scale(model, (vec3){Rect->Width, Rect->Height, 1.0f});
+
+    Rect->shader.setMat4(&Rect->shader, "model", model);
+
+    Rect->texture.use_texture(&Rect->texture);
     glBindVertexArray(Rect->VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
 }
 
 void Update(GLFWwindow* window, Rectangle* Rect, float deltaTime)

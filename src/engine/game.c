@@ -124,17 +124,43 @@ void CheckCollision(Game* game)
             if (i == j) continue;
             Check = game->Objects[j];
 
-            // TODO: DEBUG Collision!
-
             if (
-                Current.DrawX > Check.DrawX
-                && Current.DrawX < Check.DrawX + Check.Width
-                && Current.DrawY > Check.DrawY
-                && Current.DrawY < Check.DrawY + Check.Height
+                (   // Top left
+                    Current.X > Check.X
+                    && Current.X < Check.X + Check.Width
+                    && Current.Y > Check.Y
+                    && Current.Y < Check.Y + Check.Height
+                )
+                ||
+                (   // Top right
+                    Current.X + Current.Width > Check.X
+                    && Current.X + Current.Width < Check.X + Check.Width
+                    && Current.Y > Check.Y
+                    && Current.Y < Check.Y + Check.Height
+                )
+                ||
+                (   // Bottom left
+                    Current.X > Check.X
+                    && Current.X < Check.X + Check.Width
+                    && Current.Y + Current.Height > Check.Y
+                    && Current.Y + Current.Height < Check.Y + Check.Height
+                )
+                ||
+                (   // Bottom right
+                    Current.X + Current.Width > Check.X
+                    && Current.X + Current.Width < Check.X + Check.Width
+                    && Current.Y + Current.Height > Check.Y
+                    && Current.Y + Current.Height < Check.Y + Check.Height
+                )
             )
+
             {
                 game->Objects[i].OnCollision(&game->Objects[i], &game->Objects[j]);
-                game->Objects[j].OnCollision(&game->Objects[j], &game->Objects[i]);
+                game->Objects[i].isCollide = 1;
+            }
+            else
+            {
+                game->Objects[i].isCollide = 0;
             }
         }
     }

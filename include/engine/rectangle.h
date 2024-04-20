@@ -25,6 +25,7 @@ struct _rectangle
     float YOffset;
     float DrawX;
     float DrawY;
+    short int isCollide;
 
     void (*Render)(Rectangle*);
     void (*Update)(GLFWwindow*, Rectangle*, float);

@@ -27,51 +27,71 @@ Player CreatePlayer(
 
 void PlayerInput(GLFWwindow* window, Rectangle* Rect, float deltaTime)
 {
-    Rect->shader.useShader(&Rect->shader);
-    Rect->shader.setFloat(&Rect->shader, "xOffset", Rect->XOffset);
-    Rect->shader.setFloat(&Rect->shader, "yOffset", Rect->YOffset);
-
-    float DrawX = Rect->InitX / 400 - 1;
-    float DrawY = (Rect->InitY / 300 - 1) * -1;
-    Rect->DrawX = DrawX;
-    Rect->DrawY = DrawY;
-    Rect->X = (DrawX + Rect->XOffset + 1.0f) * 400.0f;
-    Rect->Y = 600 - (DrawY + Rect->YOffset + 1.0f) * 300.0f;
-
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        Rect->XOffset = Rect->XOffset + (1 * deltaTime);
+        Rect->X = Rect->X + (200 * deltaTime);
     }
     else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        Rect->XOffset = Rect->XOffset - (1 * deltaTime);
+        Rect->X = Rect->X - (200 * deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        Rect->YOffset = Rect->YOffset + (1 * deltaTime);
+        Rect->Y = Rect->Y - (200 * deltaTime);
     }
     else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        Rect->YOffset = Rect->YOffset - (1 * deltaTime);
+        Rect->Y = Rect->Y + (200 * deltaTime);
     }
 }
 
 void PlayerCollision(Rectangle* Rect, Rectangle* Other)
 {
-    //printf("ASD!\n");
+    // TODO: Make the leftover
+    if (// Top left
+        Rect->X > Other->X
+        && Rect->X < Other->X + Other->Width
+        && Rect->Y > Other->Y
+        && Rect->Y < Other->Y + Other->Height
+    )
+    {
+        
+    }
+    else if (// Top right
+        Rect->X + Rect->Width > Other->X
+        && Rect->X + Rect->Width < Other->X + Other->Width
+        && Rect->Y > Other->Y
+        && Rect->Y < Other->Y + Other->Height
+    )
+    {
+
+    }
+    else if (// Bottom left
+        Rect->X > Other->X
+        && Rect->X < Other->X + Other->Width
+        && Rect->Y + Rect->Height > Other->Y
+        && Rect->Y + Rect->Height < Other->Y + Other->Height
+    )
+    {
+
+    }
+    else if(// Bottom right
+        Rect->X + Rect->Width > Other->X
+        && Rect->X + Rect->Width < Other->X + Other->Width
+        && Rect->Y + Rect->Height > Other->Y
+        && Rect->Y + Rect->Height < Other->Y + Other->Height
+    )
+    {
+
+    }
 }
 
 int main()
 {
     Game game = CreateGame(800, 600);
     
-    //Player player = CreatePlayer("./container.jpg", 50.0f, 50.0f, 50.0f, 50.0f);
-    
-
-    Rectangle Rect;
-    CreateRectangle("./container.jpg", 50.0f, 50.0f, 50.0f, 50.0f, &Rect);
-    Rect.Update = &PlayerInput;
-    game.AddObject(&game, &Rect);
+    Player player = CreatePlayer("./container.jpg", 50.0f, 50.0f, 50.0f, 50.0f);
+    game.AddObject(&game, &player.Rect);
 
     Rectangle rect;
     CreateRectangle("./container.jpg", 200.0f, 200.0f, 50.0f, 50.0f, &rect);
