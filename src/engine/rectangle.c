@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 void Render(Rectangle* Rect);
-void Update(GLFWwindow* window, Rectangle* Rect);
+void Update(GLFWwindow* window, Rectangle* Rect, float deltaTime);
 void OnCollision(Rectangle* Rect, Rectangle* Other);
 void CleanUp(Rectangle* Rect);
 
@@ -80,7 +80,7 @@ void Render(Rectangle* Rect)
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-void Update(GLFWwindow* window, Rectangle* Rect)
+void Update(GLFWwindow* window, Rectangle* Rect, float deltaTime)
 {
     
 }

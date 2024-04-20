@@ -20,7 +20,7 @@ struct _game
     void (*AddObject)(Game*, Rectangle*);
     void (*RemoveObject)(Game*, Rectangle*);
 
-    void (*UpdateGame)(Game*);
+    void (*UpdateGame)(Game*, float);
     void (*RenderGame)(Game*);
     void (*Loop)(Game*); // Better name for Loop
 

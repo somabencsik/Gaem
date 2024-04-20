@@ -27,7 +27,7 @@ struct _rectangle
     float DrawY;
 
     void (*Render)(Rectangle*);
-    void (*Update)(GLFWwindow*, Rectangle*);
+    void (*Update)(GLFWwindow*, Rectangle*, float);
 
     void (*OnCollision)(Rectangle*, Rectangle*);
     

@@ -8,7 +8,7 @@
 void FramebufferSizeCallback(GLFWwindow* Window, int Width, int Height);
 void AddObject(Game* game, Rectangle* Rect);
 void RemoveObject(Game* game, Rectangle* Rect);
-void UpdateGame(Game* game);
+void UpdateGame(Game* game, float deltaTime);
 void RenderGame(Game* game);
 void Loop(Game* game);
 void CheckCollision(Game* game);
@@ -70,12 +70,12 @@ void RemoveObject(Game* game, Rectangle* Rect)
     // TODO
 }
 
-void UpdateGame(Game* game)
+void UpdateGame(Game* game, float deltaTime)
 {
     game->CheckCollision(game);
     for (unsigned int i = 0; i < game->ObjectsSize; ++i)
     {
-        game->Objects[i].Update(game->Window, &game->Objects[i]);
+        game->Objects[i].Update(game->Window, &game->Objects[i], deltaTime);
     }
 }
 
@@ -89,12 +89,19 @@ void RenderGame(Game* game)
 
 void Loop(Game* game)
 {
+    float deltaTime = 0.0f;
+    float lastFrame = 0.0f;
+
     while(!glfwWindowShouldClose(game->Window))
     {
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        game->UpdateGame(game);
+        game->UpdateGame(game, deltaTime);
         game->RenderGame(game);
 
         glfwSwapBuffers(game->Window);

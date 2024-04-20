@@ -8,7 +8,7 @@ struct _player
     Rectangle Rect;
 };
 
-void PlayerInput(GLFWwindow* window, Rectangle* Rect);
+void PlayerInput(GLFWwindow* window, Rectangle* Rect, float deltaTime);
 void PlayerCollision(Rectangle* Rect, Rectangle* Other);
 
 Player CreatePlayer(
@@ -25,7 +25,7 @@ Player CreatePlayer(
     return player;
 }
 
-void PlayerInput(GLFWwindow* window, Rectangle* Rect)
+void PlayerInput(GLFWwindow* window, Rectangle* Rect, float deltaTime)
 {
     Rect->shader.useShader(&Rect->shader);
     Rect->shader.setFloat(&Rect->shader, "xOffset", Rect->XOffset);
@@ -36,23 +36,23 @@ void PlayerInput(GLFWwindow* window, Rectangle* Rect)
     Rect->DrawX = DrawX;
     Rect->DrawY = DrawY;
     Rect->X = (DrawX + Rect->XOffset + 1.0f) * 400.0f;
-    Rect->Y = (DrawY + Rect->YOffset + 1.0f) * 300.0f;
+    Rect->Y = 600 - (DrawY + Rect->YOffset + 1.0f) * 300.0f;
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        Rect->XOffset = Rect->XOffset + 0.01;
+        Rect->XOffset = Rect->XOffset + (1 * deltaTime);
     }
     else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        Rect->XOffset = Rect->XOffset - 0.01;
+        Rect->XOffset = Rect->XOffset - (1 * deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        Rect->YOffset = Rect->YOffset + 0.01;
+        Rect->YOffset = Rect->YOffset + (1 * deltaTime);
     }
     else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        Rect->YOffset = Rect->YOffset - 0.01;
+        Rect->YOffset = Rect->YOffset - (1 * deltaTime);
     }
 }
 
