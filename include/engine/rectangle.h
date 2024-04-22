@@ -7,6 +7,8 @@
 #include "shader.h"
 #include "texture.h"
 
+#include "attribute.h"
+
 typedef struct _rectangle Rectangle;
 struct _rectangle
 {
@@ -17,20 +19,21 @@ struct _rectangle
 
     float X;
     float Y;
-    float InitX;
-    float InitY;
     float Width;
     float Height;
-    float XOffset;
-    float YOffset;
-    float DrawX;
-    float DrawY;
     short int isCollide;
+    Rectangle* collideRect;
+
+    Attribute* attributes;
+    unsigned int attrSize;
+    unsigned int attrRealSize;
 
     void (*Render)(Rectangle*);
     void (*Update)(GLFWwindow*, Rectangle*, float);
 
-    void (*OnCollision)(Rectangle*, Rectangle*);
+    void (*OnCollision)(Rectangle*, Rectangle*, float);
+
+    void (*addAttribute)(Rectangle*, Attribute);
     
     void (*CleanUp)(Rectangle*);
 };

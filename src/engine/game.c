@@ -11,7 +11,7 @@ void RemoveObject(Game* game, Rectangle* Rect);
 void UpdateGame(Game* game, float deltaTime);
 void RenderGame(Game* game);
 void Loop(Game* game);
-void CheckCollision(Game* game);
+void CheckCollision(Game* game, float deltaTime);
 void Clean(Game* game);
 
 Game CreateGame(unsigned int WindowWidth, unsigned int WindowHeight)
@@ -72,11 +72,11 @@ void RemoveObject(Game* game, Rectangle* Rect)
 
 void UpdateGame(Game* game, float deltaTime)
 {
-    game->CheckCollision(game);
     for (unsigned int i = 0; i < game->ObjectsSize; ++i)
     {
         game->Objects[i].Update(game->Window, &game->Objects[i], deltaTime);
     }
+    game->CheckCollision(game, deltaTime);
 }
 
 void RenderGame(Game* game)
@@ -112,7 +112,7 @@ void Loop(Game* game)
     glfwTerminate();
 }
 
-void CheckCollision(Game* game)
+void CheckCollision(Game* game, float deltaTime)
 {
     Rectangle Current;
     Rectangle Check;
@@ -155,12 +155,14 @@ void CheckCollision(Game* game)
             )
 
             {
-                game->Objects[i].OnCollision(&game->Objects[i], &game->Objects[j]);
+                game->Objects[i].OnCollision(&game->Objects[i], &game->Objects[j], deltaTime);
+                game->Objects[i].collideRect = &game->Objects[j];
                 game->Objects[i].isCollide = 1;
             }
             else
             {
                 game->Objects[i].isCollide = 0;
+                game->Objects[i].collideRect = NULL;
             }
         }
     }

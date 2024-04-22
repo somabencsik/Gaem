@@ -3,9 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define APPEND_SIZE 4
+
 void Render(Rectangle* Rect);
 void Update(GLFWwindow* window, Rectangle* Rect, float deltaTime);
-void OnCollision(Rectangle* Rect, Rectangle* Other);
+void OnCollision(Rectangle* Rect, Rectangle* Other, float deltaTime);
+void addAttribute(Rectangle* Rect, Attribute attribute);
 void CleanUp(Rectangle* Rect);
 
 void CreateRectangle(
@@ -21,6 +24,7 @@ void CreateRectangle(
     Rect->Render = Render;
     Rect->OnCollision = OnCollision;
     Rect->CleanUp = CleanUp;
+    Rect->addAttribute = addAttribute;
 
     CreateShader(
         "./resources/shaders/rectangle.vs",
@@ -29,14 +33,13 @@ void CreateRectangle(
     );
     CreateTexture(TexturePath, &Rect->texture);
 
-    Rect->InitX = X;
-    Rect->InitY = Y;
-    Rect->Width = Width;
-    Rect->Height = Height;
-    Rect->XOffset = 0.0f;
-    Rect->YOffset = 0.0f;
     Rect->X = X;
     Rect->Y = Y;
+    Rect->Width = Width;
+    Rect->Height = Height;
+    Rect->attributes = (Attribute*)malloc(APPEND_SIZE * sizeof(Attribute));
+    Rect->attrSize = 0;
+    Rect->attrRealSize = APPEND_SIZE;
 
     float vertices[] = { 
         // pos      // tex
@@ -92,9 +95,20 @@ void Update(GLFWwindow* window, Rectangle* Rect, float deltaTime)
     
 }
 
-void OnCollision(Rectangle* Rect, Rectangle* Other)
+void OnCollision(Rectangle* Rect, Rectangle* Other, float deltaTime)
 {
 
+}
+
+void addAttribute(Rectangle* Rect, Attribute attribute)
+{
+    Rect->attributes[Rect->attrSize] = attribute;
+    ++Rect->attrSize;
+    if (Rect->attrSize == Rect->attrRealSize - 1)
+    {
+        Rect->attributes = (Attribute*)realloc(Rect->attributes, (Rect->attrRealSize + APPEND_SIZE) * sizeof(Attribute));
+        Rect->attrRealSize = Rect->attrRealSize + APPEND_SIZE;
+    }
 }
 
 void CleanUp(Rectangle* Rect)

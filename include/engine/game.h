@@ -24,7 +24,7 @@ struct _game
     void (*RenderGame)(Game*);
     void (*Loop)(Game*); // Better name for Loop
 
-    void (*CheckCollision)(Game*);
+    void (*CheckCollision)(Game*, float);
 
     void (*Clean)(Game*);
 };
