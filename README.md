@@ -7,8 +7,11 @@ A typical game with fantasy characters.
 - [x] "Player" should be a separate class from engine
 - [x] Compile dlls?
 - [x] Create the example separate?
-- [ ] Check collision
-- [ ] Try dynamic include "scripts"?
+- [x] Check collision
+- [ ] Create warrior class
+    - [ ] Give player "sword", Move sword with player
+    - [ ] Animate attack (sword swing)
+    - [ ] Move camera with player
 
 # Milestones
 
