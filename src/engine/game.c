@@ -81,8 +81,18 @@ void UpdateGame(Game* game, float deltaTime)
 
 void RenderGame(Game* game)
 {
+    Rectangle player = game->Objects[0];
+    mat4 projection = GLM_MAT4_IDENTITY_INIT;
+    float left = player.X - 800.0f / 2.0f + (player.Width / 2.0f);
+    float right = player.X + 800.0f / 2.0f + (player.Width / 2.0f);
+    float top = player.Y - 600.0f / 2.0f + (player.Width / 2.0f);
+    float bottom = player.Y + 600.0f / 2.0f + (player.Width / 2.0f);
+    glm_ortho(left, right, bottom, top, -1.0f, 1.0f, projection);
+
     for (unsigned int i = 0; i < game->ObjectsSize; ++i)
     {
+        game->Objects[i].shader.useShader(&game->Objects[i].shader);
+        game->Objects[i].shader.setMat4(&game->Objects[i].shader, "projection", projection);
         game->Objects[i].Render(&game->Objects[i]);
     }
 }
