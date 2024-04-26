@@ -15,6 +15,6 @@ struct _shader
     void (*setMat4)(Shader*, const char*, mat4);
 };
 
-void CreateShader(const char* VertexPath, const char* FragmentPath, Shader* shader);
+void initializeShader(const char* vertexPath, const char* fragmentPath, Shader* shader);
 
 #endif // SHADER_H

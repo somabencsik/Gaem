@@ -5,7 +5,7 @@
 
 void use_texture(Texture* texture);
 
-void CreateTexture(const char* TexturePath, Texture* texture)
+void initializeTexture(const char* TexturePath, Texture* texture)
 {
     glGenTextures(1, &texture->ID);
     glBindTexture(GL_TEXTURE_2D, texture->ID);

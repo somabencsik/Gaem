@@ -5,104 +5,106 @@
 
 #define APPEND_SIZE 10
 
-void FramebufferSizeCallback(GLFWwindow* Window, int Width, int Height);
-void AddObject(Game* game, Rectangle* Rect);
-void RemoveObject(Game* game, Rectangle* Rect);
-void UpdateGame(Game* game, float deltaTime);
-void RenderGame(Game* game);
-void Loop(Game* game);
-void CheckCollision(Game* game, float deltaTime);
-void Clean(Game* game);
+void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+void addGameObject(Game* game, GameObject* gameObject);
+void removeGameObject(Game* game, GameObject* gameObject);
+void updateGame(Game* game, float deltaTime);
+void renderGame(Game* game);
+void loop(Game* game);
+void checkCollision(Game* game, float deltaTime);
+void clean(Game* game);
 
-Game CreateGame(unsigned int WindowWidth, unsigned int WindowHeight)
+void initializeGame(unsigned int windowWidth, unsigned int windowHeight, Game* this)
 {
-    Game game;
-
-    game.WindowWidth = WindowWidth;
-    game.WindowHeight = WindowHeight;
-    game.AddObject = AddObject;
-    game.RemoveObject = RemoveObject;
-    game.UpdateGame = UpdateGame;
-    game.RenderGame = RenderGame;
-    game.Loop = Loop;
-    game.CheckCollision = CheckCollision;
-    game.Clean = Clean;
+    this->windowWidth = windowWidth;
+    this->windowHeight = windowHeight;
+    this->addGameObject = addGameObject;
+    this->removeGameObject = removeGameObject;
+    this->updateGame = updateGame;
+    this->renderGame = renderGame;
+    this->loop = loop;
+    this->checkCollision = checkCollision;
+    this->clean = clean;
 
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     // TODO: Handle errors
-    game.Window = glfwCreateWindow(
-        game.WindowWidth, game.WindowHeight, "LearnOpenGL", NULL, NULL
+    this->window = glfwCreateWindow(
+        this->windowWidth, this->windowHeight, "LearnOpenGL", NULL, NULL
     );
-    glfwMakeContextCurrent(game.Window);
+    glfwMakeContextCurrent(this->window);
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-    glViewport(0, 0, game.WindowWidth, game.WindowHeight);
-    glfwSetFramebufferSizeCallback(game.Window, FramebufferSizeCallback);
+    glViewport(0, 0, this->windowWidth, this->windowHeight);
+    glfwSetFramebufferSizeCallback(this->window, framebufferSizeCallback);
 
-    game.Objects = (Rectangle*)malloc(APPEND_SIZE * sizeof(Rectangle));
-    game.ObjectsSize = 0;
-    game.ObjectsRealSize = APPEND_SIZE;
+    initializeShader(
+        "./resources/shaders/rectangle.vs",
+        "./resources/shaders/rectangle.fs",
+        &this->gameObjectShader
+    );
 
-    return game;
+    this->gameObjects = (GameObject*)malloc(APPEND_SIZE * sizeof(GameObject));
+    this->gameObjectsSize = 0;
+    this->gameObjectsRealSize = APPEND_SIZE;
 }
 
-void FramebufferSizeCallback(GLFWwindow* Window, int Width, int Height)
+void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-    glViewport(0, 0, Width, Height);
+    glViewport(0, 0, width, height);
 }
 
-void AddObject(Game* game, Rectangle* Rect)
+void addGameObject(Game* game, GameObject* gameObject)
 {
-    game->Objects[game->ObjectsSize] = *Rect;
-    ++game->ObjectsSize;
+    game->gameObjects[game->gameObjectsSize] = *gameObject;
+    ++game->gameObjectsSize;
 
-    if (game->ObjectsSize == game->ObjectsRealSize - 1)
+    if (game->gameObjectsSize == game->gameObjectsRealSize - 1)
     {
-        game->Objects = (Rectangle*)realloc(game->Objects, (game->ObjectsRealSize + APPEND_SIZE) * sizeof(Rectangle));
-        game->ObjectsRealSize = game->ObjectsRealSize + APPEND_SIZE;
+        game->gameObjects = (GameObject*)realloc(game->gameObjects, (game->gameObjectsRealSize + APPEND_SIZE) * sizeof(GameObject));
+        game->gameObjectsRealSize = game->gameObjectsRealSize + APPEND_SIZE;
     }
 }
 
-void RemoveObject(Game* game, Rectangle* Rect)
+void removeGameObject(Game* game, GameObject* gameObject)
 {
     // TODO
 }
 
-void UpdateGame(Game* game, float deltaTime)
+void updateGame(Game* game, float deltaTime)
 {
-    for (unsigned int i = 0; i < game->ObjectsSize; ++i)
+    for (unsigned int i = 0; i < game->gameObjectsSize; ++i)
     {
-        game->Objects[i].Update(game->Window, &game->Objects[i], deltaTime);
+        game->gameObjects[i].updateGameObject(game->window, &game->gameObjects[i], deltaTime);
     }
-    game->CheckCollision(game, deltaTime);
+    game->checkCollision(game, deltaTime);
 }
 
-void RenderGame(Game* game)
+void renderGame(Game* game)
 {
-    Rectangle player = game->Objects[0];
+    GameObject player = game->gameObjects[0];
     mat4 projection = GLM_MAT4_IDENTITY_INIT;
-    float left = player.X - 800.0f / 2.0f + (player.Width / 2.0f);
-    float right = player.X + 800.0f / 2.0f + (player.Width / 2.0f);
-    float top = player.Y - 600.0f / 2.0f + (player.Width / 2.0f);
-    float bottom = player.Y + 600.0f / 2.0f + (player.Width / 2.0f);
+    float left = player.x - 800.0f / 2.0f + (player.width / 2.0f);
+    float right = player.x+ 800.0f / 2.0f + (player.width / 2.0f);
+    float top = player.y - 600.0f / 2.0f + (player.width / 2.0f);
+    float bottom = player.y + 600.0f / 2.0f + (player.width / 2.0f);
     glm_ortho(left, right, bottom, top, -1.0f, 1.0f, projection);
 
-    for (unsigned int i = 0; i < game->ObjectsSize; ++i)
+    for (unsigned int i = 0; i < game->gameObjectsSize; ++i)
     {
-        game->Objects[i].shader.useShader(&game->Objects[i].shader);
-        game->Objects[i].shader.setMat4(&game->Objects[i].shader, "projection", projection);
-        game->Objects[i].Render(&game->Objects[i]);
+        game->gameObjects[i].shader->useShader(game->gameObjects[i].shader);
+        game->gameObjects[i].shader->setMat4(game->gameObjects[i].shader, "projection", projection);
+        game->gameObjects[i].renderGameObject(&game->gameObjects[i]);
     }
 }
 
-void Loop(Game* game)
+void loop(Game* game)
 {
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
 
-    while(!glfwWindowShouldClose(game->Window))
+    while(!glfwWindowShouldClose(game->window))
     {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -111,78 +113,71 @@ void Loop(Game* game)
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        game->UpdateGame(game, deltaTime);
-        game->RenderGame(game);
+        game->updateGame(game, deltaTime);
+        game->renderGame(game);
 
-        glfwSwapBuffers(game->Window);
+        glfwSwapBuffers(game->window);
         glfwPollEvents();
     }
 
-    game->Clean(game);
+    game->clean(game);
     glfwTerminate();
 }
 
-void CheckCollision(Game* game, float deltaTime)
+void checkCollision(Game* game, float deltaTime)
 {
-    Rectangle Current;
-    Rectangle Check;
-    for (unsigned int i = 0; i < game->ObjectsSize; ++i)
+    GameObject* current;
+    GameObject* check;
+    for (unsigned int i = 0; i < game->gameObjectsSize; ++i)
     {
-        Current = game->Objects[i];
-        for (unsigned int j = 0; j < game->ObjectsSize; ++j)
+        current = &game->gameObjects[i];
+        for (unsigned int j = 0; j < game->gameObjectsSize; ++j)
         {
             if (i == j) continue;
-            Check = game->Objects[j];
+            check = &game->gameObjects[j];
 
             if (
                 (   // Top left
-                    Current.X > Check.X
-                    && Current.X < Check.X + Check.Width
-                    && Current.Y > Check.Y
-                    && Current.Y < Check.Y + Check.Height
+                    current->x > check->x
+                    && current->x < check->x + check->width
+                    && current->y > check->y
+                    && current->y < check->y + check->height
                 )
                 ||
                 (   // Top right
-                    Current.X + Current.Width > Check.X
-                    && Current.X + Current.Width < Check.X + Check.Width
-                    && Current.Y > Check.Y
-                    && Current.Y < Check.Y + Check.Height
+                    current->x + current->width > check->x
+                    && current->x + current->width < check->x + check->width
+                    && current->y > check->y
+                    && current->y < check->y + check->height
                 )
                 ||
                 (   // Bottom left
-                    Current.X > Check.X
-                    && Current.X < Check.X + Check.Width
-                    && Current.Y + Current.Height > Check.Y
-                    && Current.Y + Current.Height < Check.Y + Check.Height
+                    current->x > check->x
+                    && current->x < check->x + check->width
+                    && current->y + current->height > check->y
+                    && current->y + current->height < check->y + check->height
                 )
                 ||
                 (   // Bottom right
-                    Current.X + Current.Width > Check.X
-                    && Current.X + Current.Width < Check.X + Check.Width
-                    && Current.Y + Current.Height > Check.Y
-                    && Current.Y + Current.Height < Check.Y + Check.Height
+                    current->x + current->width > check->x
+                    && current->x + current->width < check->x + check->width
+                    && current->y + current->height > check->y
+                    && current->y + current->height < check->y + check->height
                 )
             )
 
             {
-                game->Objects[i].OnCollision(&game->Objects[i], &game->Objects[j], deltaTime);
-                game->Objects[i].collideRect = &game->Objects[j];
-                game->Objects[i].isCollide = 1;
-            }
-            else
-            {
-                game->Objects[i].isCollide = 0;
-                game->Objects[i].collideRect = NULL;
+                game->gameObjects[i].onCollision(&game->gameObjects[i], &game->gameObjects[j], deltaTime);
             }
         }
     }
 }
 
-void Clean(Game* game)
+void clean(Game* game)
 {
-    for (unsigned int i = 0; i < game->ObjectsSize; ++i)
+    for (unsigned int i = 0; i < game->gameObjectsSize; ++i)
     {
-        game->Objects[i].CleanUp(&game->Objects[i]);
+        game->gameObjects[i].cleanGameObject(&game->gameObjects[i]);
     }
-    free(game->Objects);
+    free(game->gameObjects);
 }

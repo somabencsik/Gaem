@@ -4,31 +4,32 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
-#include "rectangle.h"
+#include "gameObject.h"
 
 typedef struct _game Game;
 struct _game
 {
-    unsigned int WindowWidth;
-    unsigned int WindowHeight;
-    GLFWwindow* Window;
+    unsigned int windowWidth, windowHeight;
+    GLFWwindow* window;
 
-    Rectangle* Objects;
-    unsigned int ObjectsSize;
-    unsigned int ObjectsRealSize;
+    GameObject* gameObjects;
+    unsigned int gameObjectsSize;
+    unsigned int gameObjectsRealSize;
 
-    void (*AddObject)(Game*, Rectangle*);
-    void (*RemoveObject)(Game*, Rectangle*);
+    Shader gameObjectShader;
 
-    void (*UpdateGame)(Game*, float);
-    void (*RenderGame)(Game*);
-    void (*Loop)(Game*); // Better name for Loop
+    void (*addGameObject)(Game*, GameObject*);
+    void (*removeGameObject)(Game*, GameObject*);
 
-    void (*CheckCollision)(Game*, float);
+    void (*updateGame)(Game*, float);
+    void (*renderGame)(Game*);
+    void (*loop)(Game*); // Better name for Loop
 
-    void (*Clean)(Game*);
+    void (*checkCollision)(Game*, float);
+
+    void (*clean)(Game*);
 };
 
-Game CreateGame(unsigned int WindowWidth, unsigned int WindowHeight);
+void initializeGame(unsigned int windowWidth, unsigned int windowHeight, Game* this);
 
 #endif // GAME_H

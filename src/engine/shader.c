@@ -5,15 +5,15 @@
 #include <string.h>
 #include <glad/glad.h>
 
-char* ReadShader(const char* ShaderPath);
-void CheckShaderError(unsigned int shader, const char* type);
+char* readShader(const char* ShaderPath);
+void checkShaderError(unsigned int shader, const char* type);
 void useShader(Shader* shader);
 void setBool(Shader* shader, const char* name, int value);
 void setInt(Shader* shader, const char* name, int value);
 void setFloat(Shader* shader, const char* name, float value);
 void setMat4(Shader* shader, const char* name, mat4 matrix);
 
-void CreateShader(const char* VertexPath, const char* FragmentPath, Shader* shader)
+void initializeShader(const char* vertexPath, const char* fragmentPath, Shader* shader)
 {
     shader->useShader = useShader;
     shader->setBool = setBool;
@@ -21,31 +21,31 @@ void CreateShader(const char* VertexPath, const char* FragmentPath, Shader* shad
     shader->setFloat = setFloat;
     shader->setMat4 = setMat4;
 
-    const char* VertexCode = ReadShader(VertexPath);
-    const char* FragmentCode = ReadShader(FragmentPath);
+    const char* VertexCode = readShader(vertexPath);
+    const char* FragmentCode = readShader(fragmentPath);
 
-    unsigned int VertexShader, FragmentShader;
-    VertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(VertexShader, 1, &VertexCode, NULL);
-    glCompileShader(VertexShader);
-    CheckShaderError(VertexShader, "Vertex");
+    unsigned int vertexShader, fragmentShader;
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &VertexCode, NULL);
+    glCompileShader(vertexShader);
+    checkShaderError(vertexShader, "Vertex");
 
-    FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(FragmentShader, 1, &FragmentCode, NULL);
-    glCompileShader(FragmentShader);
-    CheckShaderError(FragmentShader, "Fragment");
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &FragmentCode, NULL);
+    glCompileShader(fragmentShader);
+    checkShaderError(fragmentShader, "Fragment");
 
     shader->ID = glCreateProgram();
-    glAttachShader(shader->ID, VertexShader);
-    glAttachShader(shader->ID, FragmentShader);
+    glAttachShader(shader->ID, vertexShader);
+    glAttachShader(shader->ID, fragmentShader);
     glLinkProgram(shader->ID);
-    CheckShaderError(shader->ID, "Program");
+    checkShaderError(shader->ID, "Program");
 
-    glDeleteShader(VertexShader);
-    glDeleteShader(FragmentShader);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
 }
 
-char* ReadShader(const char* ShaderPath)
+char* readShader(const char* ShaderPath)
 {
     FILE *ShaderFile;
     ShaderFile = fopen(ShaderPath, "r");
@@ -70,7 +70,7 @@ char* ReadShader(const char* ShaderPath)
     return ShaderCode;
 }
 
-void CheckShaderError(unsigned int shader, const char* type)
+void checkShaderError(unsigned int shader, const char* type)
 {
     int success;
     char infoLog[1024];
@@ -117,7 +117,5 @@ void setFloat(Shader* shader, const char* name, float value)
 
 void setMat4(Shader* shader, const char* name, mat4 matrix)
 {
-    float sendMatrix[4] = {matrix[0][0], matrix[1][1], matrix[2][2], matrix[3][3]};
-    //float sendMatrix[4] = {1.0f, 1.0f, 1.0f, 1.0f};
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, name), 1, GL_FALSE, matrix[0]);
 }
