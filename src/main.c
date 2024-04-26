@@ -11,7 +11,7 @@ struct _player
 };
 
 unsigned short int isCollision(GameObject* this, GameObject* other);
-void playerInput(GLFWwindow* window, GameObject* this, float deltaTime);
+void playerUpdate(GLFWwindow* window, GameObject* this, float deltaTime);
 void playerCollision(GameObject* this, GameObject* other, float deltaTime);
 
 void initializePlayer(
@@ -25,7 +25,7 @@ void initializePlayer(
 )
 {
     initializeGameObject(x, y, width, height, &this->object, shader, texture);
-    this->object.updateGameObject = playerInput;
+    this->object.updateGameObject = playerUpdate;
     this->object.onCollision = playerCollision;
 
     this->movement[0] = 0.0f;
@@ -39,7 +39,7 @@ void initializePlayer(
     this->object.addAttribute(&this->object, &speedAttr);
 }
 
-void playerInput(GLFWwindow* window, GameObject* this, float deltaTime)
+void playerUpdate(GLFWwindow* window, GameObject* this, float deltaTime)
 {
     float speed = *(float*)getAttrValue("speed", this->attributes, this->attrSize);
     float* movement = getAttrValue("movement", this->attributes, this->attrSize);
@@ -73,6 +73,16 @@ void playerInput(GLFWwindow* window, GameObject* this, float deltaTime)
 
     this->x = this->x + xDisplacement;
     this->y = this->y + yDisplacement;
+
+    mat4 projection = GLM_MAT4_IDENTITY_INIT;
+    float left = this->x - 800.0f / 2.0f + (this->width / 2.0f);
+    float right = this->x+ 800.0f / 2.0f + (this->width / 2.0f);
+    float top = this->y - 600.0f / 2.0f + (this->width / 2.0f);
+    float bottom = this->y + 600.0f / 2.0f + (this->width / 2.0f);
+    glm_ortho(left, right, bottom, top, -1.0f, 1.0f, projection);
+
+    this->shader->useShader(this->shader);
+    this->shader->setMat4(this->shader, "projection", projection);
 }
 
 unsigned short int isCollision(GameObject* this, GameObject* other)
@@ -94,32 +104,32 @@ void playerCollision(GameObject* this, GameObject* other, float deltaTime)
     float yDisplacement = ((speed * deltaTime) * movement[1]);
 
     unsigned short int xCurrCollision = isCollision(this, other);
-    this->x = this->x - (xDisplacement * 2);
+    this->x = this->x - xDisplacement;
     unsigned short int xPrevCollision = isCollision(this, other);
-    this->x = this->x + (xDisplacement * 2);
+    this->x = this->x + xDisplacement;
     unsigned short int xCollision = xCurrCollision && !xPrevCollision;
     while(xCollision)
     {
         xCurrCollision = isCollision(this, other);
-        this->x = this->x - (xDisplacement * 2);
+        this->x = this->x - xDisplacement;
         xPrevCollision = isCollision(this, other);
-        this->x = this->x + (xDisplacement * 2);
+        this->x = this->x + xDisplacement;
         xCollision = xCurrCollision && !xPrevCollision;
         this->x = this->x - (movement[0] * deltaTime);
     }
 
     unsigned short int yCurrCollision = isCollision(this, other);
-    this->y = this->y - (yDisplacement * 2);
+    this->y = this->y - yDisplacement;
     unsigned short int yPrevCollision = isCollision(this, other);
-    this->y = this->y + (yDisplacement * 2);
+    this->y = this->y + yDisplacement;
     unsigned short int yCollision = yCurrCollision && !yPrevCollision;
     
     while(yCollision)
     {
         yCurrCollision = isCollision(this, other);
-        this->y = this->y - (yDisplacement * 2);
+        this->y = this->y - yDisplacement;
         yPrevCollision = isCollision(this, other);
-        this->y = this->y + (yDisplacement * 2);
+        this->y = this->y + yDisplacement;
         yCollision = yCurrCollision && !yPrevCollision;
         this->y = this->y - (movement[1] * deltaTime);
     }
@@ -140,14 +150,17 @@ int main()
     ); 
     game.addGameObject(&game, &player.object);
     
+    GameObject wall;
     for (int i = 0; i < 800 / 50; ++i)
     {
         for (int j = 0; j < 600 / 50; ++j)
         {
             if (i != 0 && i != 15 && j != 0 && j != 11)
                 continue;
-            GameObject wall;
-            initializeGameObject(50.0f * i, 50.0f * j, 50.0f, 50.0f, &wall, &game.gameObjectShader, &playerTexture);
+            initializeGameObject(
+                50.0f * i, 50.0f * j, 50.0f, 50.0f,
+                &wall, &game.gameObjectShader, &playerTexture
+            );
             game.addGameObject(&game, &wall);
         }
     }

@@ -82,7 +82,6 @@ void renderGameObject(GameObject* this)
     this->shader->useShader(this->shader);
 
     mat4 model = GLM_MAT4_IDENTITY_INIT;
-
     glm_translate(model, (vec3){this->x, this->y, 0.0f});
     glm_translate(model, (vec3){this->width * 0.5f, this->height * 0.5f, 0.0f});
     glm_rotate(model, glm_rad(0.0f), (vec3){0.0f, 0.0f, 1.0f});
@@ -106,4 +105,5 @@ void cleanGameObject(GameObject* this)
 {
     glDeleteVertexArrays(1, &this->VAO);
     glDeleteBuffers(1, &this->VBO);
+    free(this->attributes);
 }

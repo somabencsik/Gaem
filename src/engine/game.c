@@ -83,18 +83,8 @@ void updateGame(Game* game, float deltaTime)
 
 void renderGame(Game* game)
 {
-    GameObject player = game->gameObjects[0];
-    mat4 projection = GLM_MAT4_IDENTITY_INIT;
-    float left = player.x - 800.0f / 2.0f + (player.width / 2.0f);
-    float right = player.x+ 800.0f / 2.0f + (player.width / 2.0f);
-    float top = player.y - 600.0f / 2.0f + (player.width / 2.0f);
-    float bottom = player.y + 600.0f / 2.0f + (player.width / 2.0f);
-    glm_ortho(left, right, bottom, top, -1.0f, 1.0f, projection);
-
     for (unsigned int i = 0; i < game->gameObjectsSize; ++i)
     {
-        game->gameObjects[i].shader->useShader(game->gameObjects[i].shader);
-        game->gameObjects[i].shader->setMat4(game->gameObjects[i].shader, "projection", projection);
         game->gameObjects[i].renderGameObject(&game->gameObjects[i]);
     }
 }

@@ -5,7 +5,7 @@
 #include <string.h>
 #include <glad/glad.h>
 
-char* readShader(const char* ShaderPath);
+char* readShader(const char* shaderPath);
 void checkShaderError(unsigned int shader, const char* type);
 void useShader(Shader* shader);
 void setBool(Shader* shader, const char* name, int value);
@@ -45,29 +45,29 @@ void initializeShader(const char* vertexPath, const char* fragmentPath, Shader* 
     glDeleteShader(fragmentShader);
 }
 
-char* readShader(const char* ShaderPath)
+char* readShader(const char* shaderPath)
 {
-    FILE *ShaderFile;
-    ShaderFile = fopen(ShaderPath, "r");
+    FILE *shaderFile;
+    shaderFile = fopen(shaderPath, "r");
 
-    char* ShaderCode = (char*)calloc(1, sizeof(char));
+    char* shaderCode = (char*)calloc(1, sizeof(char));
     size_t n = 1;
 
     char str[500];
-    while (fgets(str, 500, ShaderFile))
+    while (fgets(str, 500, shaderFile))
     {
         n += strlen(str);
-        char* tmp = (char*)realloc(ShaderCode, n);
+        char* tmp = (char*)realloc(shaderCode, n);
 
         if (tmp == NULL) break;
 
-        ShaderCode = tmp;
+        shaderCode = tmp;
 
-        strcat(ShaderCode, str);
+        strcat(shaderCode, str);
     }
-    fclose(ShaderFile);
+    fclose(shaderFile);
 
-    return ShaderCode;
+    return shaderCode;
 }
 
 void checkShaderError(unsigned int shader, const char* type)
