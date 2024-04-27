@@ -35,3 +35,19 @@ A typical game with fantasy characters.
 ## 4.?
 - [ ] Multiplayer (PvP)?
     - [ ] Sandbox?
+
+---
+
+# Build
+
+## Dependencies
+
+**On Windows**: gcc
+
+**On Ubuntu**: build-essential, libglfw3, libglfw3-dev
+
+## Installation
+
+**On Window**: Run build.bat glfwlib included
+
+**On Ubuntu**: Run build.sh glfwlib is installed
